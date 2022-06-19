@@ -93,3 +93,17 @@ if __name__ == '__main__':
         with open(args.list) as f:
             ips = [ip.strip() for ip in f.readlines() if ip.strip()]
     else:
+ ips = [ip.strip() for ip in sys.stdin.readlines() if ip.strip()]
+
+    for ip in ips:
+        q.put(ip)
+
+    try:
+        for _ in range(args.threads):
+            threading.Thread(target=check_thread, daemon=True).start()
+
+        q.join()
+
+        print('[+] finished!')
+    except KeyboardInterrupt:
+        print('\n[~] cancelled by user\r')
